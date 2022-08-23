@@ -14,8 +14,9 @@ steps:
   inputs:
     secureFile: 'candy-inventory.yml'
 
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- bash: |
+    ls -lah
+  displayName: "List the directory"
 
 - bash: |
     chmod +x script.sh

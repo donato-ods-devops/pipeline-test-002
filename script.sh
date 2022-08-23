@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "Hello, world!"
+cat candy-inventory.yml
