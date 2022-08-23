@@ -10,6 +10,10 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'candy-inventory.yml'
+
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
