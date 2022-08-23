@@ -1,3 +1,3 @@
 #!/bin/bash
-
-cat candy-inventory.yml
+FILE=$1
+cat $FILE
