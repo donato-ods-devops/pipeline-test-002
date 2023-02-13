@@ -17,16 +17,15 @@ parameters:
 stages:
 - stage:
   jobs:
-  - job: download_sshkey
+  - job: download_ssh_key
     displayName: "Download the ssh key"
     steps:
     - task: DownloadSecureFile@1
       inputs:
         secureFile: 'di-candy-test-run.pem'
-      name: download_ssh_key
   
   - job: prep
-    dependsOn: download_sshkey.download_ssh_key
+    dependsOn: download_ssh_key
     steps:
     - script: |
         ls -lah
