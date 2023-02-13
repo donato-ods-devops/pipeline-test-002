@@ -35,8 +35,12 @@ steps:
     displayName: "Git Clone the CANDy repository"
 
   - bash: |
+      ls -lah
+    displayName: "List the working directory"
+
+  - bash: |
       ansible -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
-    displayName: 'Run bash script'
+    displayName: 'Ping the servers in the inventory file'
 
   - bash: |
       rm -rf Candy
