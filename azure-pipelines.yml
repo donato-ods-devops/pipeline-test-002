@@ -10,38 +10,46 @@ pool:
   vmImage: ubuntu-latest
 
 parameters:
-  - name: candy_env
-    displayName: CANdy Network Environment
-    type: string
-    default: dev
-    values:
-      - dev
-      - stage
-      - prod
+- name: candy_env
+  displayName: CANdy Network Environment
+  type: string
+  default: dev
+  values:
+  - dev
+  - stage
+  - prod
 
 steps:
-  - task: DownloadSecureFile@1
-    name: download_ssh_key
-    inputs:
-      secureFile: 'di-candy-test-run.pem'
-    displayName: "Download the ssh key."
+- task: DownloadSecureFile@1
+  name: download_ssh_key
+  inputs:
+    secureFile: 'di-candy-test-run.pem'
+  displayName: "Download the ssh key."
 
-  - bash: |
-      ln -sn $(download_ssh_key.secureFilePath) ./di-candy-test-run.pem
-    displayName: "Symlink the SSH key"
+- bash: |
+    ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem
+  displayName: "Symlink the SSH key"
 
-  - bash: |
-      git clone https://github.com/donato-ods-devops/Candy.git
-    displayName: "Git Clone the CANDy repository"
+- bash: |
+    git clone https://github.com/donato-ods-devops/Candy.git
+  displayName: "Git Clone the CANDy repository"
 
-  - bash: |
-      ls -lah
-    displayName: "List the working directory"
+- bash: |
+    ls -lah
+  displayName: "List the working directory"
 
-  - bash: |
-      ansible -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
-    displayName: 'Ping the servers in the inventory file'
+- bash: |
+    ansible -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
+  displayName: 'Ping the servers in the inventory file'
+  name: ping_servers
 
-  - bash: |
-      rm -rf Candy
-      rm -rf *.pem
+- bash: |
+    rm -rf Candy
+    rm -rf /tmp/di-candy-test-run.pem
+
+- job: cleanup
+  dependsOn: ping_servers
+  condition: failed()
+  bash:
+    rm -rf Candy
+    rm -rf /tmp/di-candy-test-run.pem

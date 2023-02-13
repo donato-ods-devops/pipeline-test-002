@@ -15,6 +15,6 @@ nodes:
 
   vars:
     ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
-    ansible_ssh_private_key_file: di-candy-test-run.pem
+    ansible_ssh_private_key_file: /tmp/di-candy-test-run.pem
     ansible_python_interpreter: /usr/bin/python3
     ansible_user: validatornode
