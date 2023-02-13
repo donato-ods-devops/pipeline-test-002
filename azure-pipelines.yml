@@ -23,33 +23,24 @@ steps:
 - script: |
     ls -lah
     ls -lah $(download_ssh_key.secureFilePath)
-    # sudo find / -type f -name di-candy-test-run.pem
     ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem  
-    # git clone https://github.com/donato-ods-devops/Candy.git
-    # ls -lah
     ls -lah /tmp
-  displayName: "Symlink the SSH key"
+    git clone https://github.com/donato-ods-devops/Candy.git
+    ansible -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
+  displayName: 'Ping the servers in the inventory file'
+  name: ping_servers
 
-  # - job: ping_servers
-  #   dependsOn: prep
-  #   steps:
-  #   - script: |
-  #       ansible -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
-  #     displayName: 'Ping the servers in the inventory file'
-
-  # - job: remove_stuff
-  #   dependsOn: ping_servers
-  #   steps:
-  #   - script: |
-  #       rm -rf Candy
-  #       rm -rf /tmp/di-candy-test-run.pem
-  #     displayName: 'Remove stuff'
-
-  # - job: cleanup
-  #   dependsOn: ping_servers
-  #   condition: failed()
-  #   displayName: Cleanup on Failure
-  #   steps:
-  #   - script:
-  #       rm -rf Candy
-  #       rm -rf /tmp/di-candy-test-run.pem
+- script: |
+    rm -rf Candy
+    rm -rf /tmp/di-candy-test-run.pem
+  displayName: 'Cleanup on Success'
+  dependsOn: ping_servers
+  condition: succeeded()
+  name: cleanup_success
+  
+- script:
+    rm -rf Candy
+    rm -rf /tmp/di-candy-test-run.pem
+  dependsOn: ping_servers
+  condition: failed()
+  displayName: Cleanup on Failure
