@@ -27,9 +27,8 @@ steps:
     displayName: "Download the ssh key."
 
   - bash: |
-      ls -lah
-      find / type -f -name di-candy-test-run.pem
-    displayName: "Git Clone the CANDy repository"
+      ln -sn $(download_ssh_key.secureFilePath) ./di-candy-test-run.pem
+    displayName: "Symlink the SSH key"
 
   - bash: |
       git clone https://github.com/donato-ods-devops/Candy.git
