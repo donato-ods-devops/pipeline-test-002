@@ -1,8 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - main
 
@@ -19,37 +14,51 @@ parameters:
   - stage
   - prod
 
-steps:
-- task: DownloadSecureFile@1
-  name: download_ssh_key
-  inputs:
-    secureFile: 'di-candy-test-run.pem'
-  displayName: "Download the ssh key."
+stages:
+- stage:
+  jobs:
+  - job: download_ssh_key
+    displayName: "Download the ssh key."
+    steps:
+    - task: DownloadSecureFile@1
+      inputs:
+        secureFile: 'di-candy-test-run.pem'
+  
+  - job: symlink_ssh_key
+    displayName: "Symlink the SSH key"
+    steps:
+    - bash: |
+        ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem  
 
-- bash: |
-    ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem
-  displayName: "Symlink the SSH key"
+  - job: git_clone_candy_repo
+    displayName: "Git clone the CANDy repository"
+    steps:
+    - bash: |
+        git clone https://github.com/donato-ods-devops/Candy.git
 
-- bash: |
-    git clone https://github.com/donato-ods-devops/Candy.git
-  displayName: "Git Clone the CANDy repository"
+  - job: list_working_directory
+    displayName: "List the working directory"
+    steps:
+    - bash: |
+        ls -lah
 
-- bash: |
-    ls -lah
-  displayName: "List the working directory"
+  - job: ping_servers
+    displayName: 'Ping the servers in the inventory file'
+    steps:
+    - bash: |
+        ansible -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
 
-- bash: |
-    ansible -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
-  displayName: 'Ping the servers in the inventory file'
-  name: ping_servers
+  - job: remove_stuff
+    steps:
+    - bash: |
+        rm -rf Candy
+        rm -rf /tmp/di-candy-test-run.pem
 
-- bash: |
-    rm -rf Candy
-    rm -rf /tmp/di-candy-test-run.pem
-
-- job: cleanup
-  dependsOn: ping_servers
-  condition: failed()
-  bash:
-    rm -rf Candy
-    rm -rf /tmp/di-candy-test-run.pem
+  - job: cleanup
+    dependsOn: ping_servers
+    condition: failed()
+    displayName: Cleanup on Failure
+    steps:
+    - bash:
+        rm -rf Candy
+        rm -rf /tmp/di-candy-test-run.pem
