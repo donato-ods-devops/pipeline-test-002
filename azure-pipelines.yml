@@ -33,14 +33,14 @@ steps:
 - script: |
     rm -rf Candy
     rm -rf /tmp/di-candy-test-run.pem
+    rm -rf $(download_ssh_key.secureFilePath)
   displayName: 'Cleanup on Success'
-  dependsOn: ping_servers
   condition: succeeded()
   name: cleanup_success
   
 - script:
     rm -rf Candy
     rm -rf /tmp/di-candy-test-run.pem
-  dependsOn: ping_servers
+    rm -rf $(download_ssh_key.secureFilePath)
   condition: failed()
   displayName: Cleanup on Failure
