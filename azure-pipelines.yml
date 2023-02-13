@@ -27,7 +27,7 @@ steps:
     displayName: "Download the ssh key."
 
   - bash: |
-      git clone git@github.com:donato-ods-devops/Candy.git
+      git clone https://github.com/donato-ods-devops/Candy.git
     displayName: "Git Clone the CANDy repository"
 
   - bash: |
