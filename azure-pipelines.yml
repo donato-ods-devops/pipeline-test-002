@@ -14,27 +14,20 @@ parameters:
   - stage
   - prod
 
-stages:
-- stage:
-  jobs:
-  - job: download_ssh_key
-    displayName: "Download the ssh key"
-    steps:
-    - task: DownloadSecureFile@1
-      inputs:
-        secureFile: 'di-candy-test-run.pem'
-  
-  - job: prep
-    dependsOn: download_ssh_key
-    steps:
-    - script: |
-        ls -lah
-        find / -type f -name di-candy-test-run.pem
-        # ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem  
-        # git clone https://github.com/donato-ods-devops/Candy.git
-        # ls -lah
-        # ls -lah /tmp
-      displayName: "Symlink the SSH key"
+steps:
+- task: DownloadSecureFile@1
+  name: download_ssh_key
+  inputs:
+    secureFile: 'di-candy-test-run.pem'
+
+- script: |
+    ls -lah
+    sudo find / -type f -name di-candy-test-run.pem
+    # ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem  
+    # git clone https://github.com/donato-ods-devops/Candy.git
+    # ls -lah
+    # ls -lah /tmp
+  displayName: "Symlink the SSH key"
 
   # - job: ping_servers
   #   dependsOn: prep
