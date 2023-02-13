@@ -1,0 +1,20 @@
+nodes:
+  children:
+    node1:
+      hosts:
+        4.204.242.148:
+    node2:
+      hosts:
+        4.204.246.104:
+    node3:
+      hosts:
+        20.220.214.15:
+    node4:
+      hosts:
+        4.205.36.214:
+
+  vars:
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+    ansible_ssh_private_key_file: di-candy-test-run.pem
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_user: validatornode

@@ -9,18 +9,31 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+parameters:
+  - name: candy_env
+    displayName: CANdy Network Environment
+    type: string
+    default: dev
+    values:
+      - dev
+      - stage
+      - prod
+
 steps:
-- task: DownloadSecureFile@1
-  name: inventory_file
-  inputs:
-    secureFile: 'candy-inventory.yml'
-  displayName: "Download the inventory file."
+  - task: DownloadSecureFile@1
+    name: download_ssh_key
+    inputs:
+      secureFile: 'di-candy-test-run.pem'
+    displayName: "Download the ssh key."
 
-- bash: |
-    ls -lah
-  displayName: "List the directory"
+  - bash: |
+      git clone git@github.com:donato-ods-devops/Candy.git
+    displayName: "Git Clone the CANDy repository"
 
-- bash: |
-    chmod +x script.sh
-    ./script.sh $(inventory_file.secureFilePath)
-  displayName: 'Run bash script'
+  - bash: |
+      ansible -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
+    displayName: 'Run bash script'
+
+  - bash: |
+      rm -rf Candy
+      rm -rf *.pem
