@@ -23,6 +23,7 @@ stages:
     - task: DownloadSecureFile@1
       inputs:
         secureFile: 'di-candy-test-run.pem'
+      name: download_ssh_key
   
   - job: prep
     dependsOn: download_ssh_key
