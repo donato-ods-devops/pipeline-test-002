@@ -24,10 +24,10 @@ steps:
     ls -lah
     ls -lah $(download_ssh_key.secureFilePath)
     # sudo find / -type f -name di-candy-test-run.pem
-    # ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem  
+    ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem  
     # git clone https://github.com/donato-ods-devops/Candy.git
     # ls -lah
-    # ls -lah /tmp
+    ls -lah /tmp
   displayName: "Symlink the SSH key"
 
   # - job: ping_servers
