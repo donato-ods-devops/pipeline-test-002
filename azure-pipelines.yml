@@ -17,7 +17,7 @@ parameters:
 stages:
 - stage:
   jobs:
-  - job: download_ssh_key
+  - job: download_sshkey
     displayName: "Download the ssh key"
     steps:
     - task: DownloadSecureFile@1
@@ -29,32 +29,33 @@ stages:
     dependsOn: download_ssh_key
     steps:
     - script: |
+        ls -lah
         ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem  
         git clone https://github.com/donato-ods-devops/Candy.git
         ls -lah
         ls -lah /tmp
       displayName: "Symlink the SSH key"
 
-  - job: ping_servers
-    dependsOn: prep
-    steps:
-    - script: |
-        ansible -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
-      displayName: 'Ping the servers in the inventory file'
+  # - job: ping_servers
+  #   dependsOn: prep
+  #   steps:
+  #   - script: |
+  #       ansible -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
+  #     displayName: 'Ping the servers in the inventory file'
 
-  - job: remove_stuff
-    dependsOn: ping_servers
-    steps:
-    - script: |
-        rm -rf Candy
-        rm -rf /tmp/di-candy-test-run.pem
-      displayName: 'Remove stuff'
+  # - job: remove_stuff
+  #   dependsOn: ping_servers
+  #   steps:
+  #   - script: |
+  #       rm -rf Candy
+  #       rm -rf /tmp/di-candy-test-run.pem
+  #     displayName: 'Remove stuff'
 
-  - job: cleanup
-    dependsOn: ping_servers
-    condition: failed()
-    displayName: Cleanup on Failure
-    steps:
-    - script:
-        rm -rf Candy
-        rm -rf /tmp/di-candy-test-run.pem
+  # - job: cleanup
+  #   dependsOn: ping_servers
+  #   condition: failed()
+  #   displayName: Cleanup on Failure
+  #   steps:
+  #   - script:
+  #       rm -rf Candy
+  #       rm -rf /tmp/di-candy-test-run.pem
