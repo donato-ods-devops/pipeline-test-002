@@ -26,7 +26,7 @@ stages:
       name: download_ssh_key
   
   - job: prep
-    dependsOn: download_ssh_key
+    dependsOn: download_sshkey.download_ssh_key
     steps:
     - script: |
         ls -lah
