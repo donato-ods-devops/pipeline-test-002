@@ -18,37 +18,30 @@ stages:
 - stage:
   jobs:
   - job: download_ssh_key
-    displayName: "Download the ssh key."
+    displayName: "Download the ssh key"
     steps:
     - task: DownloadSecureFile@1
       inputs:
         secureFile: 'di-candy-test-run.pem'
   
-  - job: symlink_ssh_key
+  - job: prep
     displayName: "Symlink the SSH key"
     steps:
     - bash: |
         ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem  
-
-  - job: git_clone_candy_repo
-    displayName: "Git clone the CANDy repository"
-    steps:
-    - bash: |
         git clone https://github.com/donato-ods-devops/Candy.git
-
-  - job: list_working_directory
-    displayName: "List the working directory"
-    steps:
-    - bash: |
         ls -lah
+        ls -lah /tmp
 
   - job: ping_servers
     displayName: 'Ping the servers in the inventory file'
+    dependsOn: prep
     steps:
     - bash: |
         ansible -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
 
   - job: remove_stuff
+    dependsOn: ping_servers
     steps:
     - bash: |
         rm -rf Candy
