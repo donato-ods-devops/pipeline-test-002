@@ -26,7 +26,7 @@ steps:
     ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem  
     ls -lah /tmp
     git clone https://github.com/donato-ods-devops/Candy.git
-    ansible -vvv -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
+    ansible -vvvv -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
   displayName: 'Ping the servers in the inventory file'
   name: ping_servers
 
