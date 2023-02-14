@@ -23,7 +23,8 @@ steps:
 - script: |
     ls -lah
     ls -lah $(download_ssh_key.secureFilePath)
-    ln -sn $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem  
+    cp $(download_ssh_key.secureFilePath) /tmp/di-candy-test-run.pem
+    chmod 0640 /tmp/di-candy-test-run.pem  
     ls -lah /tmp
     git clone https://github.com/donato-ods-devops/Candy.git
     ansible -vvvv -i inventories/${{ parameters.candy_env }}/inventory.yml nodes -m ping
