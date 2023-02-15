@@ -1,5 +1,5 @@
 trigger:
-- main
+- none
 
 pool:
   vmImage: ubuntu-latest
@@ -14,6 +14,11 @@ parameters:
   - stage
   - prod
 
+- name: test
+  displayName: Input box
+  type: string
+  default: "N/A"
+
 steps:
 - task: DownloadSecureFile@1
   name: download_ssh_key
@@ -27,7 +32,7 @@ steps:
     chmod 0600 ./di-candy-test-run.pem
     ls -lah /tmp
     git clone https://github.com/donato-ods-devops/Candy.git
-    ansible -vvvv -i inventories/${{ parameters.candy_env }}/inventory.yml --private-key ./di-candy-test-run.pem nodes -m ping
+    ansible -i inventories/${{ parameters.candy_env }}/inventory.yml --private-key ./di-candy-test-run.pem nodes -m ping
   displayName: 'Ping the servers in the inventory file'
   name: ping_servers
 
